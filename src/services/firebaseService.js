@@ -7,7 +7,7 @@ import { sha256, SEED_USER } from './hash';
 
 /**
  * Implementación sobre Firebase Firestore con el mismo contrato que localStorageService.
- * Colecciones: `users`, `budgets` (id: `${userId}_${YYYY-MM}`) y `expenses`.
+ * Colecciones: `users`, `budgets` (id: `${userId}_${YYYY-MM}`), `expenses` e `incomes`.
  * Login custom: usuario + hash SHA-256 guardados en `users`.
  *
  * NOTA: para producción, usa Firebase Authentication y reglas de seguridad de Firestore;
@@ -82,5 +82,22 @@ export const firebaseService = {
   },
   async deleteExpense(id) {
     await deleteDoc(doc(db, 'expenses', id));
+  },
+
+  async listIncomes(userId, month) {
+    const snap = await getDocs(query(collection(db, 'incomes'), where('userId', '==', userId)));
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((i) => i.date.startsWith(month));
+  },
+  async addIncome(userId, data) {
+    const payload = { userId, ...data, createdAt: Date.now() };
+    const ref = await addDoc(collection(db, 'incomes'), payload);
+    return { id: ref.id, ...payload };
+  },
+  async updateIncome(id, data) {
+    await updateDoc(doc(db, 'incomes', id), data);
+    return { id, ...data };
+  },
+  async deleteIncome(id) {
+    await deleteDoc(doc(db, 'incomes', id));
   },
 };

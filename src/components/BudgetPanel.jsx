@@ -12,7 +12,7 @@ function Progress({ spent, limit }) {
   );
 }
 
-export default function BudgetPanel({ budget, expenses, onSave }) {
+export default function BudgetPanel({ budget, expenses, incomes = [], onSave }) {
   const notify = useToast();
   const [total, setTotal] = useState('');
   const [cats, setCats] = useState({});
@@ -24,6 +24,8 @@ export default function BudgetPanel({ budget, expenses, onSave }) {
   }, [budget]);
 
   const spent = useMemo(() => expenses.reduce((s, e) => s + e.amount, 0), [expenses]);
+  const income = useMemo(() => incomes.reduce((s, i) => s + i.amount, 0), [incomes]);
+  const balance = income - spent;
   const spentBy = useMemo(() => {
     const m = {};
     expenses.forEach((e) => (m[e.categoryId] = (m[e.categoryId] || 0) + e.amount));
@@ -56,6 +58,17 @@ export default function BudgetPanel({ budget, expenses, onSave }) {
         <button className="btn btn-ghost" onClick={() => setEditing((v) => !v)}>
           {editing ? 'Cancelar' : limit ? 'Editar' : 'Definir'}
         </button>
+      </div>
+
+      <div className="stats balance">
+        <div><span className="muted">Ingresos</span><strong className="text-ok">{formatMoney(income)}</strong></div>
+        <div><span className="muted">Gastos</span><strong>{formatMoney(spent)}</strong></div>
+        <div>
+          <span className="muted">Balance</span>
+          <strong className={balance < 0 ? 'text-danger' : 'text-ok'}>
+            {balance < 0 && '-'}{formatMoney(Math.abs(balance))}
+          </strong>
+        </div>
       </div>
 
       {limit > 0 ? (

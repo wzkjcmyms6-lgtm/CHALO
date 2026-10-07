@@ -9,11 +9,13 @@ import { sha256, SEED_USER } from './hash';
  *   saveBudget(userId, month, budget)
  *   listExpenses(userId, month) -> Expense[]
  *   addExpense(userId, data) / updateExpense(id, data) / deleteExpense(id)
+ *   listIncomes(userId, month) / addIncome(userId, data) / updateIncome(id, data) / deleteIncome(id)
  */
 const KEYS = {
   users: 'chalo.users',
   budgets: 'chalo.budgets',
   expenses: 'chalo.expenses',
+  incomes: 'chalo.incomes',
   session: 'chalo.session',
 };
 
@@ -77,5 +79,22 @@ export const localStorageService = {
   },
   async deleteExpense(id) {
     write(KEYS.expenses, read(KEYS.expenses, []).filter((e) => e.id !== id));
+  },
+
+  async listIncomes(userId, month) {
+    return read(KEYS.incomes, []).filter((i) => i.userId === userId && i.date.startsWith(month));
+  },
+  async addIncome(userId, data) {
+    const income = { id: uid(), userId, ...data, createdAt: Date.now() };
+    write(KEYS.incomes, [...read(KEYS.incomes, []), income]);
+    return income;
+  },
+  async updateIncome(id, data) {
+    const all = read(KEYS.incomes, []).map((i) => (i.id === id ? { ...i, ...data } : i));
+    write(KEYS.incomes, all);
+    return all.find((i) => i.id === id);
+  },
+  async deleteIncome(id) {
+    write(KEYS.incomes, read(KEYS.incomes, []).filter((i) => i.id !== id));
   },
 };

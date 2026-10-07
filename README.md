@@ -17,6 +17,7 @@ Producción: `npm run build` y `npm run preview`.
 
 - **Panel 1 – Presupuesto:** límite mensual, límite opcional por categoría, gastado / disponible y barra de progreso (verde < 70 %, amarillo 70–90 %, rojo > 90 %).
 - **Panel 2 – Gastos:** formulario rápido (monto, categoría, descripción, fecha), historial del mes con búsqueda, filtro por categoría, edición y borrado.
+- **Ingresos:** registro de ingresos del mes (monto, descripción, fecha, editar/eliminar) y resumen Ingresos − Gastos = Balance en el panel de presupuesto.
 - Mensajes de confirmación (toasts) al agregar/editar/eliminar gastos y actualizar el presupuesto.
 - En móvil los paneles se alternan con la barra inferior; en escritorio se muestran lado a lado.
 
@@ -30,7 +31,7 @@ src/
     firebaseService.js     # Firestore: colecciones users, budgets, expenses
     hash.js                # SHA-256 de contraseñas + usuario inicial
   context/                 # AuthContext, ToastContext
-  components/              # Login, BudgetPanel, ExpensePanel
+  components/              # Login, BudgetPanel, ExpensePanel, IncomePanel
   utils/                   # categorías y formato
 ```
 
